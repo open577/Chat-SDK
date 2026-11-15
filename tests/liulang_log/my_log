@@ -1,0 +1,7 @@
+[09:45:18][my_log_test.cc:19]: 小明今年18岁
+[09:49:02][debug  ][my_log_test.cc:19]: 小明今年18岁
+[09:50:49][debug  ][my_log_test.cc][19]: 小明今年18岁
+[09:50:55][debug  ][my_log_test.cc][19]: 小明今年18岁[14:41:01][debug  ][my_log_test.cc][19]: 小明今年18岁
+[14:41:01][error  ][my_log_test.cc][20]: 反序列化失败
+[14:43:46][debug  ][my_log_test.cc][19]: 小明今年18岁
+[14:43:46][error  ][my_log_test.cc][20]: 反序列化失败
