@@ -1,4 +1,5 @@
-#include "../include/mylog.h"
+#include "../../include/mylog.h"
+#include "../../src/mylog.cxx"
 #include <memory>
 using namespace liulang;
 int main()

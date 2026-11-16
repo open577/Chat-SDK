@@ -12,7 +12,7 @@ namespace model_config
         std::string _content;   // 消息内容
         std::time_t _time;      // 发消息时间
 
-        Message(std::string &role, std::string &content) : _role(role), _content(content) {}
+        Message(const std::string &role, const std::string &content) : _role(role), _content(content) {}
     };
 
     struct Model_Basic_Config
@@ -27,7 +27,7 @@ namespace model_config
         {
         }
 
-        virtual ~Model_Basic_Config() {}
+        // virtual ~Model_Basic_Config() {}
     };
 
     struct Cloud_Config : public Model_Basic_Config

@@ -1,11 +1,11 @@
 #include "../include/DeepSeekProvider.h"
 #include "../include/mylog.h"
 #include <jsoncpp/json/json.h>
-
+#define CPPHTTPLIB_OPENSSL_SUPPORT
 #include <httplib.h>
 #include <jsoncpp/json/reader.h>
 
-// using namespace liulang;
+using namespace liulang;
 namespace DeepSeekProvider
 {
     // 初始化模型
@@ -46,12 +46,13 @@ namespace DeepSeekProvider
     // 获取模型描述
     std::string DeepSeekProvider::GetModelDes()
     {
-        return "深度求索 DeepSeek,强推理开源基座,支持本地部署与 API 调用";
+        return "深度求索 DeepSeek,强推理开源基座,支持本地部署与 API 调用\n";
     }
     // 全量响应
     std::string DeepSeekProvider::SendMessage(const std::vector<Message> &messages,
                                               const std::map<std::string, std::string> &requestParam)
     {
+        std::cout<<"jindsflk";
         // 检测模型是否可以运行
         if (!IsAvailable())
         {
@@ -60,16 +61,16 @@ namespace DeepSeekProvider
         }
 
         // 构建请求参数
-        double tempture = 0.7;
+        double temperature = 0.7;
         int maxtoken = 2048;
-        if (requestParam.find("tempture") != requestParam.end())
+        if (requestParam.find("temperature") != requestParam.end())
         {
-            tempture = std::stod(requestParam.at("tempture"));
+            temperature = std::stod(requestParam.at("temperature"));
         }
 
-        if (requestParam.find("maxtoken") != requestParam.end())
+        if (requestParam.find("max_tokens") != requestParam.end())
         {
-            tempture = std::stod(requestParam.at("maxtoken"));
+            maxtoken = std::stod(requestParam.at("max_tokens"));
         }
 
         // 构建历史消息对象
@@ -85,14 +86,15 @@ namespace DeepSeekProvider
         // 构建请求体
         Json::Value Request;
         Request["model"] = GetModelName();
-        Request["message"] = messageArray;
-        Request["tempture"] = tempture;
-        Request["maxtoken"] = maxtoken;
+        Request["messages"] = messageArray;
+        Request["temperature"] = temperature;
+        Request["max_tokens"] = maxtoken;
 
         // 构建请求头
         httplib::Headers headers = {
-            {"Authorization", "Bearer " + _apikey},
-            {"Content-Type", "application/json"}};
+            {"Authorization", "Bearer " + _apikey}
+            // {"Content-Type", "application/json"}
+        };
 
         // 序列化请求
         //  1. 创建StreamWriter配置构造器
@@ -108,9 +110,8 @@ namespace DeepSeekProvider
         httplib::Client client(_url.c_str());
         client.set_connection_timeout(30, 0); // 连接超时时间为30秒
         client.set_read_timeout(60, 0);       // 设置超时时间为60秒
-
         // 发送POST请求
-        auto response = client.Post("/v1/chat/completions", headers, requestBodyStr, "application/json");
+        auto response = client.Post("/chat/completions", headers, requestBodyStr, "application/json");
         if (!response)
         {
             ERR("DeepSeekProvider sendMessage POST request failed");
@@ -121,6 +122,7 @@ namespace DeepSeekProvider
 
         if (response->status != 200)
         {
+            ERR("请求失败");
             return "";
         }
 
@@ -138,15 +140,20 @@ namespace DeepSeekProvider
                 {
                     std::string replyContent = choice["message"]["content"].asString();
                     INF("DeepSeekProvider response text: {}", replyContent);
+                    std::cout<<replyContent<<std::endl;
                     return replyContent;
                 }
             }
         }
+
+        ERR("模型发送消息失败");
+        return "模型发送消息失败";
     }
         // 增量响应
         std::string DeepSeekProvider::SendMessageStream(const std::vector<Message> &messages,
                                                         const std::map<std::string, std::string> &requestParam,
                                                         std::function<void(std::string, bool)> callback)
         {
+            return "";
         }
     }
