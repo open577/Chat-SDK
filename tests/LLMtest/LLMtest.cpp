@@ -56,7 +56,15 @@ int main(int argc, char *argv[])
 
     std::vector<model_config::Message> mes;
     mes.push_back(Message("user", "你是谁"));
-    std::string res = model->SendMessage(mes, model_config_deep);
+    std::string res = model->SendMessageStream(mes, model_config_deep,[&](const std::string &mes,bool end)->void{
+        if(end)
+        {
+            INF("{}",mes);
+        }
+
+        else
+        INF("[DONE]");
+    });
     std::cout << res;
 
     // testing::InitGoogleTest(&argc, argv);
