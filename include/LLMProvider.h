@@ -25,8 +25,8 @@ namespace LLMProvider
                                               const std::map<std::string, std::string> &requestParam,
                                               std::function<void(std::string, bool)> callback) = 0;
 
-    private:
-        bool _isavilable;
+    protected:
+        bool _isavailable;
         std::string _apikey; // apikey
         std::string _url;    // url
     };
