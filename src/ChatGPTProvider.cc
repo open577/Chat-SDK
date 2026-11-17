@@ -13,7 +13,7 @@ namespace ChatGPTProvider
         auto api = modelconfig.find("api_key");
         if (api == modelconfig.end())
         {
-            ERR("模型api没有配置");
+            // ERR("模型api没有配置");
             return false;
         }
 
@@ -25,7 +25,8 @@ namespace ChatGPTProvider
             _url = "https://api.x6.ai";
         }
 
-        _url = url->second;
+        else
+            _url = url->second;
         _isavailable = true;
         return true;
     }
@@ -82,11 +83,12 @@ namespace ChatGPTProvider
         httplib::Headers header =
             {
                 {"Authorization", "Bearer " + _apikey},
-                {"Content-Type", "application/json"}};
+                {"Content-Type", "application/json"}
+            };
 
         // 构建请求体
         Json::Value body;
-        body["model"] = GetModelName;
+        body["model"] = GetModelName();
         body["temperature"] = temperature;
         body["max_tokens"] = maxtoken;
         body["messages"] = Message;
@@ -101,7 +103,7 @@ namespace ChatGPTProvider
         client.set_connection_timeout(30, 0);
         client.set_read_timeout(60, 0);
 
-        auto response = client.Post("/v1", header, requestJson, "application/json");
+        auto response = client.Post("/v1/chat/completions", header, requestJson, "application/json");
 
         if (!response)
         {
@@ -109,32 +111,31 @@ namespace ChatGPTProvider
             return "消息发送失败";
         }
 
-        if (response != 200)
+        if (response->status != 200)
         {
             ERR("模型响应失败");
             return "模型响应失败";
         }
 
+        std::cout<<response->body<<std::endl;
         // 对相应进行反序列化 解析出正文
-        Json::Value responsebody;
-        Json::CharReaderBuilder readbuilder;
-        std::string reserr;
-        std::istringstream responsestream(response->body);
 
-        if (Json::parseFromStream(readbuilder, responsestream, &responsebody, &reserr))
+        Json::Value responseBody;
+        Json::CharReaderBuilder readerBuilder;
+        std::string parseError;
+        std::istringstream responseStream(response->body);
+        if (Json::parseFromStream(readerBuilder, responseStream, &responseBody, &parseError))
         {
-            if (responsebody.isMember("output") && responsebody["output"].isArray()&&!responsebody["output"].empty())
+            // 获取message数组
+            if (responseBody.isMember("choices") && responseBody["choices"].isArray() && !responseBody["choices"].empty())
             {
-                auto out0=responsebody["output"][0];
-                if (out0.isMember("content") && out0["content"].isArray()&&!out0["content"].empty())
+                auto choice = responseBody["choices"][0];
+                if (choice.isMember("message") && choice["message"].isMember("content"))
                 {
-                    auto out1=out0["content"];
-                    std::string text = out1[0]["text"].asString();
-                    if (text != "")
-                    {
-                        INF("模型响应解析成功");
-                    }
-                    return text;
+                    std::string replyContent = choice["message"]["content"].asString();
+                    INF("DeepSeekProvider response text: {}", replyContent);
+                    std::cout << replyContent << std::endl;
+                    return replyContent;
                 }
             }
         }
@@ -147,5 +148,6 @@ namespace ChatGPTProvider
                                                    const std::map<std::string, std::string> &requestParam,
                                                    std::function<void(std::string, bool)> callback)
     {
+        return "";
     }
 }

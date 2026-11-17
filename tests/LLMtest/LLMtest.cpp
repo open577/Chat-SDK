@@ -83,6 +83,7 @@ TEST(ChatGPTProvider_test, test)
     ASSERT_TRUE(chatgpt->IsAvailable());
     std::vector<Message> mes;
     mes.push_back(Message("user", "你是谁"));
+    mes.push_back(Message("user", "你具体是哪个版本的模型"));
     std::map<std::string, std::string> model_config;
     model_config["temperature"] = "0.7";
     model_config["max_token"] = "2048";
