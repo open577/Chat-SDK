@@ -3,10 +3,12 @@
 #include <string>
 #include "common.h"
 #include <functional>
+#include "LLMProvider.h"
 using namespace model_config;
+using namespace LLMProvider;
 namespace DeepSeekProvider
 {
-    class DeepSeekProvider
+    class DeepSeekProvider:LLMProvider
     {
     public:
         // 初始化模型
@@ -26,8 +28,5 @@ namespace DeepSeekProvider
                                       std::function<void(const std::string&, bool)> callback);
 
     private:
-        bool _isavilable;
-        std::string _apikey; // apikey
-        std::string _url;    // url
     };
 }

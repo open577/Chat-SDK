@@ -15,7 +15,7 @@ namespace DeepSeekProvider
         auto it = modelconfig.find("api_key");
         if (it == modelconfig.end())
         {
-            ERR("没有找到apikey");
+            // ERR("没有找到apikey");
             return false;
         }
 
@@ -29,14 +29,14 @@ namespace DeepSeekProvider
         }
         else
             _url = ur->second;
-        _isavilable = true;
-        INF("Deepseek模型配置成功");
+        _isavailable = true;
+        // INF("Deepseek模型配置成功");
         return true;
     }
     // 测试模型是否有效
     bool DeepSeekProvider::IsAvailable()
     {
-        return _isavilable;
+        return _isavailable;
     }
     // 获取模型名字
     std::string DeepSeekProvider::GetModelName()
@@ -151,7 +151,7 @@ namespace DeepSeekProvider
     // 增量响应
     std::string DeepSeekProvider::SendMessageStream(const std::vector<Message> &messages,
                                                     const std::map<std::string, std::string> &requestParam,
-                                                    std::function<void(const std::string&, bool)> callback)
+                                                    std::function<void(const std::string &, bool)> callback)
     {
         // 检测模型是否可以运行
         if (!IsAvailable())
@@ -194,8 +194,8 @@ namespace DeepSeekProvider
         // 构建请求头
         httplib::Headers headers = {
             {"Authorization", "Bearer " + _apikey},
-            {"Accept", "text/event-stream"}
-            // {"Content-Type", "application/json"}
+            {"Accept", "text/event-stream"},
+            {"Content-Type", "application/json"}
         };
 
         // 序列化请求体
@@ -211,8 +211,8 @@ namespace DeepSeekProvider
         std::string buffer; // 接受流式响应返回的数据
         std::string errmes; // 如果错误,打印错误信息
         // int statucode;      // 状态码
-        bool restrue;       // 返回是否成功
-        bool strend;        // 流式响应是否完成
+        bool restrue=true;       // 返回是否成功
+        bool strend=false;        // 流式响应是否完成
         std::string allbuf; // 流式响应全部内容
 
         httplib::Request req;
@@ -235,7 +235,7 @@ namespace DeepSeekProvider
 
         httplib::Client client(_url.c_str());
         client.set_connection_timeout(30, 0); // 连接超时时间为30秒
-        client.set_read_timeout(60, 0);       // 设置超时时间为60秒
+        client.set_read_timeout(300, 0);       // 设置超时时间为300秒
         // 设置对流式响应的数据块解析函数
         // 数据 总长度 偏移量 数据总长度
         req.content_receiver = [&](const char *data, size_t len, size_t offset, size_t totalLength)
@@ -297,16 +297,17 @@ namespace DeepSeekProvider
         };
 
         auto send_mes = client.send(req);
-        if(!send_mes)
+        if (!send_mes)
         {
             ERR("Send err");
         }
-
-         if(!strend){
+        if (!strend)
+        {
             WAN("stream ended without [DONE] marker");
             callback("", true);
         }
 
         return allbuf;
     }
+
 }
