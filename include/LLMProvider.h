@@ -10,7 +10,7 @@ namespace LLMProvider
     {
     public:
         // 初始化模型
-        virtual bool initModel(std::map<std::string &, std::string &> &modelconfig) = 0;
+        virtual bool initModel(std::map<std::string, std::string> &modelconfig) = 0;
         // 测试模型是否有效
         virtual bool IsAvailable() = 0;
         // 获取模型名字
