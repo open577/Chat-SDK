@@ -4,29 +4,31 @@
 namespace OllamaProvider
 {
     // 初始化模型
-    bool initModel(std::map<std::string, std::string> &modelconfig)
+    bool OllamaProvider::initModel(std::map<std::string, std::string> &modelconfig)
     {
         
     }
     // 测试模型是否有效
-    bool IsAvailable()
+    bool OllamaProvider::IsAvailable()
     {
-
+        return _isavailable;
     }
     // 获取模型名字
-    std::string GetModelName()
+    std::string OllamaProvider::GetModelName()
     {
-
+        return "deepseek-r1:1.5b";
     }
     // 获取模型描述
-    std::string GetModelDes()
-    {}
+    std::string OllamaProvider::GetModelDes()
+    {
+        return "Ollama 模型";
+    }
     // 全量响应
-    std::string SendMessage(const std::vector<Message> &messages,
+    std::string OllamaProvider::SendMessage(const std::vector<Message> &messages,
                             const std::map<std::string, std::string> &requestParam)
                             {}
     // 增量响应
-    std::string SendMessageStream(const std::vector<Message> &messages,
+    std::string OllamaProvider::SendMessageStream(const std::vector<Message> &messages,
                                   const std::map<std::string, std::string> &requestParam,
                                   std::function<void(std::string, bool)> callback)
                                   {}
