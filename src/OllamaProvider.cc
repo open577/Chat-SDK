@@ -110,7 +110,7 @@ namespace OllamaProvider
         //设置客户端请求参数
         httplib::Client client(_url);
         client.set_connection_timeout(30,0);
-        client.set_read_timeout(30,0);
+        client.set_read_timeout(300,0);
 
         //构建客户端请求头
         httplib::Headers headers=
@@ -148,7 +148,7 @@ namespace OllamaProvider
             data+=responsebody["message"]["content"].asString();
             return data;
         }
-        ERR("模型内容解析失败{}",responsebody);
+        ERR("模型内容解析失败");
         return "";
     }
     // 增量响应
@@ -156,5 +156,6 @@ namespace OllamaProvider
                                                   const std::map<std::string, std::string> &requestParam,
                                                   std::function<void(std::string, bool)> callback)
     {
+        return "";
     }
 }
