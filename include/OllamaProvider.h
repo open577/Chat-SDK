@@ -21,5 +21,10 @@ namespace OllamaProvider
         std::string SendMessageStream(const std::vector<Message> &messages,
                                       const std::map<std::string, std::string> &requestParam,
                                       std::function<void(std::string, bool)> callback);
+
+    protected:
+        std::string _modelName;
+        std::string _modelDes;
     };
+
 }
