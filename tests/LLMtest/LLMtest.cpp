@@ -141,11 +141,23 @@ TEST(OllamaProvider_test, test)
         // message.push_back(Message("user","给我写一篇小说在500字左右"));
 
         std::map<std::string,std::string> request;
-        request["temperature"]="2";
+        request["temperature"]="0.7";
         request["max_tokens"]="1024";
-        std::string res=model->SendMessage(message,request);
+        // std::string res=model->SendMessage(message,request);
+        std::string res=model->SendMessageStream(message,request,[=](const std::string data,bool statu) ->void
+        {
+
+            if(statu)
+            {
+                INF("{}",data);
+            }
+            else 
+                INF("DONE");
+            return;
+        });
 
         std::cout<<res<<std::endl;
+        
 }
 int main(int argc, char *argv[])
 {
