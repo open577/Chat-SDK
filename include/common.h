@@ -22,7 +22,7 @@ namespace model_config
         int _maxtoken = 2048;        // 一次生成的最大token
         std::string _modeldescrib;   // 模型描述
         std::string _modelurl;       // 模型URL
-        Model_Basic_Config(std::string &modelname, std::string &modeldiscrib, std::string &modelurl)
+        Model_Basic_Config(const std::string &modelname, const std::string &modeldiscrib, const std::string &modelurl)
             : _model_name(modelname), _modeldescrib(modeldiscrib), _modelurl(modelurl)
         {
         }
@@ -33,7 +33,7 @@ namespace model_config
     struct Cloud_Config : public Model_Basic_Config
     {
         std::string _apikey; // 云端模型apikey
-        Cloud_Config(std::string &modelname, std::string &modeldiscrib, std::string &modelurl, std::string apikey)
+        Cloud_Config(const std::string &modelname, const std::string &modeldiscrib, const std::string &modelurl, const std::string apikey)
             : Model_Basic_Config(modelname, modeldiscrib, modelurl),
               _apikey(apikey)
         {
@@ -42,7 +42,7 @@ namespace model_config
 
     struct Ollama_Config : public Model_Basic_Config
     {
-        Ollama_Config(std::string &modelname, std::string &modeldiscrib, std::string &modelurl)
+        Ollama_Config(const std::string &modelname, const std::string &modeldiscrib, const std::string &modelurl)
             : Model_Basic_Config(modelname, modeldiscrib, modelurl)
 
         {
@@ -53,7 +53,7 @@ namespace model_config
     {
         bool _isavailable;     // 模型是否可以运行
         std::string _provider; // 模型提供商
-        Model_Info(std::string &modelname, std::string &modeldiscrib, std::string &modelurl, std::string &provider)
+        Model_Info(const std::string &modelname="",const std::string &modeldiscrib="", const std::string &modelurl="", const std::string &provider="")
             : Model_Basic_Config(modelname, modeldiscrib, modelurl), _provider(provider), _isavailable(false)
         {
         }
