@@ -38,7 +38,7 @@ namespace SessionManager
         std::string generateMessageId(size_t messageCounter);
 
     private:
-        std::unordered_map<std::string, model_config::Session> _sessions;
+        std::unordered_map<std::string, std::shared_ptr<model_config::Session>> _sessions;
         mutable std::mutex _mutex;
         std::atomic<int64_t> _sessioncount = {0};
     };
