@@ -8,12 +8,12 @@
 #include <unordered_map>
 #include <string>
 
-namespace SessionMeanager
+namespace SessionManager
 {
-    class SessionMeanager
+    class SessionManager
     {
     public:
-        SessionMeanager(const std::string &dbname = "chatDB.db");
+        SessionManager(const std::string &dbname = "chatDB.db");
         // 创建会话 提供模型名称
         bool createSession(const std::string &modelname);
         // 通过回话ID获取会话信息
