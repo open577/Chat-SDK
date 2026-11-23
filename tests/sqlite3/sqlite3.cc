@@ -67,7 +67,7 @@ public:
         sqlite3_bind_int(stmt, 3, student.age);
         sqlite3_bind_double(stmt, 4, student.gap);
 
-        // 插入数据
+        // 执行sql语句
         int n = sqlite3_step(stmt);
         if (n != SQLITE_OK)
         {
@@ -82,12 +82,12 @@ public:
         return true;
     }
 
-    // 查询数据库
+    // 根据学生姓名查询信息
     bool quereStudentInfo(const std::string &name)
     {
         // 构建查询指令
         const std::string seleData = R"(
-            SELECT name,gender,age,gap FROM student WHERE NAME =?;    
+            SELECT stdid,name,gender,age,gap FROM student WHERE NAME =?;    
         )";
 
         // 编译
@@ -99,12 +99,166 @@ public:
             sqlite3_finalize(stmt);
             return false;
         }
+
+        // 绑定参数
+        sqlite3_bind_text(stmt, 1, name.c_str(), -1, SQLITE_TRANSIENT);
+
+        // 执行sql语句
+        int react = sqlite3_step(stmt);
+        if (n != SQLITE_OK)
+        {
+            std::cout << "数据查询失败" << sqlite3_errmsg(_db) << std::endl;
+            sqlite3_finalize(stmt);
+            return false;
+        }
         std::cout << "数据查询成功" << std::endl;
+
+        // 对结果进行解析
+        int stuid = sqlite3_column_int(stmt, 0);
+        std::string stuname = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+        std::string gender = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
+        int age = sqlite3_column_int(stmt, 3);
+        double gap = sqlite3_column_double(stmt, 4);
+
+        std::cout << "--------" << name << "信息" << "--------" << std::endl;
+        std::cout << "学生ID" << stuid << std::endl;
+        std::cout << "学生姓名" << stuname << std::endl;
+        std::cout << "学生性别" << gender << std::endl;
+        std::cout << "学生年龄" << age << std::endl;
+        std::cout << "学生分数" << gap << std::endl;
+
         // 清理stmt
         sqlite3_finalize(stmt);
 
-        //对结果进行解析
-        
+        return true;
+    }
+
+    // 查询所有学生信息
+    bool quereAllStudentInfo()
+    {
+        const std::string seleData = R"(
+            SELECT * FROM student;
+        )";
+
+        // 编译指令
+        sqlite3_stmt *stmt;
+        int n = sqlite3_prepare_v2(_db, seleData.c_str(), -1, &stmt, nullptr);
+        if (n != SQLITE_OK)
+        {
+            std::cerr << "准备语句失败：" << sqlite3_errmsg(_db) << std::endl;
+            return false;
+        }
+
+        // 执行sql语句
+        int react = sqlite3_step(stmt);
+        if (n != SQLITE_OK)
+        {
+            std::cout << "数据查询失败" << sqlite3_errmsg(_db) << std::endl;
+            sqlite3_finalize(stmt);
+            return false;
+        }
+        std::cout << "数据查询成功" << std::endl;
+
+        while (react != SQLITE_ROW)
+        {
+            if (react != SQLITE_DONE)
+            {
+                std::cerr << "数据还未查询完 但是中途出现问题" << std::endl;
+                sqlite3_finalize(stmt);
+                return false;
+            }
+            // 对结果进行解析
+            int stuid = sqlite3_column_int(stmt, 0);
+            std::string stuname = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+            std::string gender = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
+            int age = sqlite3_column_int(stmt, 3);
+            double gap = sqlite3_column_double(stmt, 4);
+
+            std::cout << "--------" << "学生信息" << "--------" << std::endl;
+            std::cout << "学生ID" << stuid << std::endl;
+            std::cout << "学生姓名" << stuname << std::endl;
+            std::cout << "学生性别" << gender << std::endl;
+            std::cout << "学生年龄" << age << std::endl;
+            std::cout << "学生分数" << gap << std::endl;
+
+            // 继续执行
+            sqlite3_step(stmt);
+        }
+
+        // 清理stmt
+        sqlite3_finalize(stmt);
+        std::cerr << "所有学生信息查询完毕" << std::endl;
+        return true;
+    }
+
+    // 删除学生信息
+    bool deleteStudentInfo(const std::string &name)
+    {
+        // 删除学生信息
+        std::string deleteSQL = R"(
+            DELETE FROM Student WHERE name = ?;
+        )";
+
+        // 准备SQL语句
+        sqlite3_stmt *stmt;
+        int rc = sqlite3_prepare_v2(_db, deleteSQL.c_str(), -1, &stmt, nullptr);
+        if (rc != SQLITE_OK)
+        {
+            std::cerr << "准备语句失败：" << sqlite3_errmsg(_db) << std::endl;
+            return false;
+        }
+
+        // 绑定参数
+        sqlite3_bind_text(stmt, 1, name.c_str(), -1, SQLITE_TRANSIENT);
+
+        // 执行SQL语句
+        rc = sqlite3_step(stmt);
+        if (rc != SQLITE_DONE && rc != SQLITE_ROW)
+        {
+            std::cerr << "执行语句失败：" << sqlite3_errmsg(_db) << std::endl;
+            sqlite3_finalize(stmt);
+            return false;
+        }
+
+        // 清理
+        sqlite3_finalize(stmt);
+        return true;
+    }
+    // 修改学生信息
+    bool updateStudentInfo(const std::string &name, const Student &info)
+    {
+        // 更新学生信息
+        std::string updateSQL = R"(
+            UPDATE Student SET gender = ?, age = ?, gap = ? WHERE name = ?;
+        )";
+
+        // 准备SQL语句
+        sqlite3_stmt *stmt;
+        int rc = sqlite3_prepare_v2(_db, updateSQL.c_str(), -1, &stmt, nullptr);
+        if (rc != SQLITE_OK)
+        {
+            std::cerr << "准备语句失败：" << sqlite3_errmsg(_db) << std::endl;
+            return false;
+        }
+
+        // 绑定参数
+        sqlite3_bind_text(stmt, 1, info.gender.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int(stmt, 2, info.age);
+        sqlite3_bind_double(stmt, 3, info.gap);
+        sqlite3_bind_text(stmt, 4, name.c_str(), -1, SQLITE_TRANSIENT);
+
+        // 执行SQL语句
+        rc = sqlite3_step(stmt);
+        if (rc != SQLITE_DONE && rc != SQLITE_ROW)
+        {
+            std::cerr << "执行语句失败：" << sqlite3_errmsg(_db) << std::endl;
+            sqlite3_finalize(stmt);
+            return false;
+        }
+
+        // 清理
+        sqlite3_finalize(stmt);
+        return true;
     }
 
 private:
