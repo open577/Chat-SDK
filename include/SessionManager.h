@@ -1,4 +1,5 @@
 #pragma once
+#include "../include/DataManager.h"
 #include "mylog.h"
 #include "common.h"
 #include <mutex>
@@ -8,6 +9,7 @@
 #include <unordered_map>
 #include <string>
 
+
 namespace SessionManager
 {
     class SessionManager
@@ -15,7 +17,7 @@ namespace SessionManager
     public:
         SessionManager(const std::string &dbname = "chatDB.db");
         // 创建会话 提供模型名称
-        bool createSession(const std::string &modelname);
+        std::string createSession(const std::string &modelname);
         // 通过回话ID获取会话信息
         std::shared_ptr<model_config::Session> getSession(const std::string &sessionid);
         // 通过会话ID 往会话里面添加message
@@ -41,5 +43,6 @@ namespace SessionManager
         std::unordered_map<std::string, std::shared_ptr<model_config::Session>> _sessions;
         mutable std::mutex _mutex;
         std::atomic<int64_t> _sessioncount = {0};
+        DataManager::DataManager _datamanager;
     };
 }
