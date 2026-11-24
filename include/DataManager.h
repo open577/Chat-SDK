@@ -32,7 +32,7 @@ namespace DataManager
         // 获取会话总数
         size_t getSessionCount() const;
 
-        
+
         ////////////////////////////////////////////////////////////////////
         // Message相关操作
         // 插入新消息--注意：插入消息时，需要更新会话的时间戳
@@ -49,8 +49,8 @@ namespace DataManager
         bool executeSQL(const std::string &sql);
 
     private:
-        sqlite3 *_db = nullptr;
+        sqlite3 *_db ;
         std::string _dbname;
-        std::mutex _mutex;
+        mutable std::mutex _mutex;
     };
 }
