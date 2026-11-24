@@ -36,6 +36,41 @@ namespace DataManager
     // 插入新会话
     bool DataManager::insertSession(const Session &session)
     {
+        std::lock_guard<std::mutex> lock(_mutex);
+
+        // 构建SQL语句
+        std::string insertSQL = R"(
+        INSERT INTO sessions (session_id, model_name, create_time, update_time)
+        VALUES (?, ?, ?, ?);
+    )";
+
+        // 准备SQL语句
+        sqlite3_stmt *stmt;
+        int rc = sqlite3_prepare_v2(_db, insertSQL.c_str(), -1, &stmt, nullptr);
+        if (rc != SQLITE_OK)
+        {
+            ERR("insertSession - 准备语句失败：{}", sqlite3_errmsg(_db));
+            return false;
+        }
+
+        // 绑定参数
+        sqlite3_bind_text(stmt, 1, session._sessionid.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 2, session._modelname.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int64(stmt, 3, static_cast<int64_t>(session._createdAt));
+        sqlite3_bind_int64(stmt, 4, static_cast<int64_t>(session._updatedAt));
+
+        // 执行SQL语句
+        rc = sqlite3_step(stmt);
+        if (rc != SQLITE_DONE)
+        {
+            ERR("insertSession - 执行语句失败：{}", sqlite3_errmsg(_db));
+            sqlite3_finalize(stmt);
+            return false;
+        }
+        // 释放语句
+        sqlite3_finalize(stmt);
+        INF("insertSession - 插入会话成功：{}", session._sessionid);
+        return true;
     }
     // 获取指定会话信息
     std::shared_ptr<Session> DataManager::getSession(const std::string &sessionId) const
