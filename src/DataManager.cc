@@ -5,7 +5,7 @@ using namespace liulang;
 
 namespace DataManager
 {
-    DataManager::DataManager(const std::string &dbName) : _dbname(dbName), _db(nullptr)
+    DataManager::DataManager(const std::string &dbName="chatDB.db") : _dbname(dbName), _db(nullptr)
     {
         // 创建数据库
         int file = sqlite3_open(_dbname.c_str(), &_db);
