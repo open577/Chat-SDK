@@ -25,7 +25,7 @@ namespace SessionManager
         _mutex.lock();
         // 生成会话ID
         std::string sessionid = generateSessionId();
-        auto session = std::make_shared<model_config::Session>();
+        auto session = std::make_shared<model_config::Session>(modelname);
         if (session == nullptr)
         {
             ERR("创建会话失败");
