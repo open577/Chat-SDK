@@ -18,7 +18,7 @@ namespace SessionManager
         SessionManager(const std::string &dbname = "chatDB.db");
         // 创建会话 提供模型名称
         std::string createSession(const std::string &modelname);
-        // 通过回话ID获取会话信息
+        // 通过会话ID获取会话信息
         std::shared_ptr<model_config::Session> getSession(const std::string &sessionid);
         // 通过会话ID 往会话里面添加message
         bool addMessage(const std::string &sessionid, model_config::Message &message);
