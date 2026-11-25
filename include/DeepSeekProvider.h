@@ -8,7 +8,7 @@ using namespace model_config;
 using namespace LLMProvider;
 namespace DeepSeekProvider
 {
-    class DeepSeekProvider:LLMProvider
+    class DeepSeekProvider:public LLMProvider
     {
     public:
         // 初始化模型
