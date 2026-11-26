@@ -1,0 +1,3 @@
+/home/liulang/ChatSDK/tests/LLMtest/CMakeFiles/llmtest.dir
+/home/liulang/ChatSDK/tests/LLMtest/CMakeFiles/edit_cache.dir
+/home/liulang/ChatSDK/tests/LLMtest/CMakeFiles/rebuild_cache.dir
