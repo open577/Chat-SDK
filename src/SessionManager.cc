@@ -7,7 +7,7 @@
 using namespace liulang;
 namespace SessionManager
 {
-    SessionManager::SessionManager(const std::string &dbname = "chatDB.db")
+    SessionManager::SessionManager(const std::string &dbname /*= "chatDB.db"*/)
         : _datamanager(dbname)
     {
         // 获取所有会话
@@ -173,8 +173,8 @@ namespace SessionManager
         }
 
         // 对会话进行排序
-        std::sort(sessions.begin(), sessions.end(), [](const std::time_t time1, const std::time_t time2) -> bool
-                  { return time1 > time2; });
+        std::sort(sessions.begin(), sessions.end(), [](const auto &time1, const auto &time2) -> bool
+                  { return time1.first > time2.first; });
 
         // 构建会话ID列表
         std::vector<std::string> sess;

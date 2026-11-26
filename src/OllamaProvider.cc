@@ -151,7 +151,7 @@ namespace OllamaProvider
     // 增量响应
     std::string OllamaProvider::SendMessageStream(const std::vector<Message> &messages,
                                                   const std::map<std::string, std::string> &requestParam,
-                                                  std::function<void(std::string, bool)> callback)
+                                                  std::function<void(const std::string &, bool)> callback)
     {
 
         // 发送消息前先查看模型是否可以运行

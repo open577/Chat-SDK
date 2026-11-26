@@ -514,13 +514,13 @@ namespace DataManager
 
         if (!executeSQL(createSession))
         {
-            ERR("会话数据库创建失败 err:{}", sqlite3_errmsg);
+            ERR("会话数据库创建失败 err:{}", sqlite3_errmsg(_db));
             return false;
         }
 
         const std::string createMessage = R"(
             CREATE TABLE IF NOT EXISTS messages(
-                messsige_id PRIMARY KEY,
+                message_id PRIMARY KEY,
                 session_id NOT NULL,
                 role NOT NULL,
                 content NOT NULL,
@@ -531,7 +531,7 @@ namespace DataManager
 
         if (!executeSQL(createMessage))
         {
-            ERR("message数据库创建失败 err:{}", sqlite3_errmsg);
+            ERR("message数据库创建失败 err:{}", sqlite3_errmsg(_db));
             return false;
         }
 

@@ -89,7 +89,7 @@ namespace LLMManager
     }
     // 给模型发送消息 流式响应
     std::string LLMManager::sendMessageStream(const std::string modelname, const std::vector<model_config::Message> message,
-                                  const std::map<std::string, std::string> &requestParam, std::function<void(std::string, bool)> callback)
+                                  const std::map<std::string, std::string> &requestParam, std::function<void(const std::string &, bool)> callback)
     {
         auto it = _modelinfo.find(modelname);
         if (it == _modelinfo.end())

@@ -126,6 +126,7 @@ namespace ChatSDK
         std::map<std::string, std::string> param;
         param["temperature"] = "0.7";
         param["max_tokens"] = "1024";
+        // param["_modeldescrib"]
         // 发送消息
         std::string response = _llmManager.sendMessage(session->_modelname, historymess, param);
         if (response.empty())
@@ -214,6 +215,7 @@ namespace ChatSDK
         std::unordered_set<std::string> modelnames;
         for (auto model : configs)
         {
+
             auto newpoint = std::dynamic_pointer_cast<Ollama_Config>(model);
 
             if (newpoint)
@@ -235,6 +237,8 @@ namespace ChatSDK
                 }
             }
         }
+
+        INF("模型已经注册成功,无需重复注册");
     }
     // 初始化所支持的模型
     void ChatSDK::initProviders(const std::vector<std::shared_ptr<Model_Basic_Config>> &configs)
@@ -246,6 +250,7 @@ namespace ChatSDK
                 if (conf->_model_name == "deepseek-chat" || conf->_model_name == "openai/gpt-6.1-terra-discount")
                 {
                     initAPIModelProviders(conf->_model_name, modelconf);
+                    INF("{} 初始化成功", conf->_model_name);
                 }
                 else
                 {
@@ -255,7 +260,9 @@ namespace ChatSDK
 
             if (auto modelconf = std::dynamic_pointer_cast<Ollama_Config>(conf))
             {
-                initOllamaModelProviders(conf->_model_name, modelconf);
+                INF("是ollama本地模型");
+                if (initOllamaModelProviders(conf->_model_name, modelconf))
+                    INF("{} 初始化成功", conf->_model_name);
             }
 
             else
@@ -325,8 +332,8 @@ namespace ChatSDK
         // 初始化模型
         std::map<std::string, std::string> modelParams;
         modelParams["model_name"] = modelName;
-        modelParams["model_desc"] = config->_modeldescrib;
-        modelParams["endpoint"] = config->_modelurl;
+        modelParams["model_des"] = config->_modeldescrib;
+        modelParams["url"] = config->_modelurl;
         if (!_llmManager.initModel(modelName, modelParams))
         {
             ERR("ChatSDK::initOllamaModelProviders: init model {} failed", modelName);

@@ -49,7 +49,7 @@ namespace ChatGPTProvider
     // 全量响应
     std::string ChatGPTProvider::SendMessageStream(const std::vector<Message> &messages,
                                                    const std::map<std::string, std::string> &requestParam,
-                                                   std::function<void(std::string, bool)> callback)
+                                                   std::function<void(const std::string &, bool)> callback)
     {
         if (!IsAvailable())
         {
@@ -253,8 +253,8 @@ namespace ChatGPTProvider
 
         // 构建httplib发送消息
         httplib::Client client(_url.c_str());
-        client.set_connection_timeout(30, 0);
-        client.set_read_timeout(60, 0);
+        client.set_connection_timeout(300, 0);
+        client.set_read_timeout(600, 0);
 
         auto response = client.Post("/v1/chat/completions", header, requestJson, "application/json");
 
@@ -266,7 +266,7 @@ namespace ChatGPTProvider
 
         if (response->status != 200)
         {
-            ERR("模型响应失败");
+            ERR("模型响应失败 {}",response->status);
             return "模型响应失败";
         }
 
