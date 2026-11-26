@@ -27,13 +27,13 @@ namespace model_config
         {
         }
 
-        // virtual ~Model_Basic_Config() {}
+        virtual ~Model_Basic_Config() {}
     };
 
     struct Cloud_Config : public Model_Basic_Config
     {
         std::string _apikey; // 云端模型apikey
-        Cloud_Config(const std::string &modelname, const std::string &modeldiscrib, const std::string &modelurl, const std::string apikey)
+        Cloud_Config(const std::string &modelname="", const std::string &modeldiscrib="", const std::string &modelurl="", const std::string apikey="")
             : Model_Basic_Config(modelname, modeldiscrib, modelurl),
               _apikey(apikey)
         {
@@ -42,7 +42,7 @@ namespace model_config
 
     struct Ollama_Config : public Model_Basic_Config
     {
-        Ollama_Config(const std::string &modelname, const std::string &modeldiscrib, const std::string &modelurl)
+        Ollama_Config(const std::string &modelname="", const std::string &modeldiscrib="", const std::string &modelurl="")
             : Model_Basic_Config(modelname, modeldiscrib, modelurl)
 
         {

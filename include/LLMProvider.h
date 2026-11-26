@@ -23,8 +23,9 @@ namespace LLMProvider
         // 增量响应
         virtual std::string SendMessageStream(const std::vector<Message> &messages,
                                               const std::map<std::string, std::string> &requestParam,
-                                              std::function<void(std::string, bool)> callback) = 0;
+                                              std::function<void(const std::string &, bool)> callback) = 0;
 
+        // virtual ~LLMProvider() = default;
 
     protected:
         bool _isavailable;

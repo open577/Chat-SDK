@@ -20,7 +20,7 @@ namespace OllamaProvider
         // 增量响应
         std::string SendMessageStream(const std::vector<Message> &messages,
                                       const std::map<std::string, std::string> &requestParam,
-                                      std::function<void(std::string, bool)> callback);
+                                      std::function<void(const std::string &, bool)> callback);
 
     protected:
         std::string _modelName;

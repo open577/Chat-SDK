@@ -19,7 +19,7 @@ namespace LLMManager
         // 给模型发送消息 全量返回
         std::string sendMessage(const std::string modelName, const std::vector<model_config::Message> message, const std::map<std::string, std::string> &requestParam);
         // 给模型发送消息 流式响应
-        std::string sendMessageStream(const std::string modelname, const std::vector<model_config::Message> message, const std::map<std::string, std::string> &requestParam, std::function<void(std::string, bool)> callback);
+        std::string sendMessageStream(const std::string modelname, const std::vector<model_config::Message> message, const std::map<std::string, std::string> &requestParam, std::function<void(const std::string &, bool)> callback);
 
     private:
         // 模型提供器 key 为模型名称 v具体实现 ————多态
