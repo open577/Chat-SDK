@@ -39,34 +39,34 @@ using namespace liulang;
 //     ASSERT_TRUE(res != "");
 //     std::cout << res;
 
-    // auto model = std::make_shared<DeepSeekProvider::DeepSeekProvider>();
-    // ASSERT_TRUE(model);
-    // std::map<std::string, std::string> model_basic;
-    // std::string key = std::getenv("deepseek_api_key");
+// auto model = std::make_shared<DeepSeekProvider::DeepSeekProvider>();
+// ASSERT_TRUE(model);
+// std::map<std::string, std::string> model_basic;
+// std::string key = std::getenv("deepseek_api_key");
 
-    // model_basic["api_key"] = key;
-    // std::cout << model->GetModelName();
-    // bool init = model->initModel(model_basic);
-    // ASSERT_TRUE(init);
-    // std::cout << model->GetModelDes();
+// model_basic["api_key"] = key;
+// std::cout << model->GetModelName();
+// bool init = model->initModel(model_basic);
+// ASSERT_TRUE(init);
+// std::cout << model->GetModelDes();
 
-    // std::map<std::string, std::string> model_config_deep;
-    // model_config_deep["temperature"] = "0.7";
-    // model_config_deep["max_tokens"] = "2048";
+// std::map<std::string, std::string> model_config_deep;
+// model_config_deep["temperature"] = "0.7";
+// model_config_deep["max_tokens"] = "2048";
 
-    // std::vector<model_config::Message> mes;
-    // mes.push_back(Message("user", "今天星期几"));
-    // std::string res = model->SendMessageStream(mes, model_config_deep, [&](const std::string &mes, bool end) -> void
-    //                                            {
-    //     if(end)
-    //     {
-    //         INF("{}",mes);
-    //     }
+// std::vector<model_config::Message> mes;
+// mes.push_back(Message("user", "今天星期几"));
+// std::string res = model->SendMessageStream(mes, model_config_deep, [&](const std::string &mes, bool end) -> void
+//                                            {
+//     if(end)
+//     {
+//         INF("{}",mes);
+//     }
 
-    //     else
-    //     INF("[DONE]"); });
-    // ASSERT_TRUE(res != "");
-    // std::cout << res << std::endl;
+//     else
+//     INF("[DONE]"); });
+// ASSERT_TRUE(res != "");
+// std::cout << res << std::endl;
 // }
 
 // TEST(ChatGPTProvider_test, test)
@@ -164,18 +164,18 @@ using namespace liulang;
 
 TEST(ChatSDK_test, test)
 {
-    
+
     std::shared_ptr<Logger> _logger = std::make_shared<Logger>();
     // _logger->logger_init("异步日志","./log", spdlog::level::err);
     _logger->logger_init("异步日志", "stdout", spdlog::level::debug);
 
-    std::unique_ptr<ChatSDK::ChatSDK> chat=std::make_unique<ChatSDK::ChatSDK> ();
+    std::unique_ptr<ChatSDK::ChatSDK> chat = std::make_unique<ChatSDK::ChatSDK>();
     std::vector<std::shared_ptr<Model_Basic_Config>> confs;
     std::shared_ptr<Cloud_Config> deepseek = std::make_shared<Cloud_Config>();
     deepseek->_apikey = std::getenv("deepseek_api_key");
     ASSERT_FALSE(deepseek->_apikey.empty());
     deepseek->_maxtoken = 1024;
-    deepseek->_model_name="deepseek-chat";
+    deepseek->_model_name = "deepseek-chat";
     deepseek->_model_tempture = 0.7;
     confs.push_back(deepseek);
 
@@ -183,7 +183,7 @@ TEST(ChatSDK_test, test)
     chatgpt->_apikey = std::getenv("openai_api_key");
     ASSERT_FALSE(chatgpt->_apikey.empty());
     chatgpt->_maxtoken = 1024;
-    chatgpt->_model_name="openai/gpt-6.1-terra-discount";
+    chatgpt->_model_name = "openai/gpt-6.1-terra-discount";
     chatgpt->_model_tempture = 0.7;
     confs.push_back(chatgpt);
 
@@ -191,7 +191,7 @@ TEST(ChatSDK_test, test)
     ollama->_maxtoken = 1024;
     ollama->_model_tempture = 0.7;
     ollama->_model_name = "deepseek-r1:1.5b";
-    ollama->_modeldescrib="ollama本地模型";
+    ollama->_modeldescrib = "ollama本地模型";
     ollama->_modelurl = "http://127.0.0.1:11434";
     confs.push_back(ollama);
 
@@ -212,8 +212,8 @@ TEST(ChatSDK_test, test)
 
     std::cout << ">>> ";
     std::getline(std::cin, message);
-    response = chat->sendMessage(createsession, message);
-    ASSERT_FALSE(response.empty());
+    // response = chat->sendMessage(createsession, message);
+    // ASSERT_FALSE(response.empty());
 
     auto messages = chat->_sessionManager.getSessionMessage(createsession);
     for (const auto &msg : messages)
@@ -221,6 +221,19 @@ TEST(ChatSDK_test, test)
         std::cout << msg._role << ": " << msg._content << std::endl;
     }
     ASSERT_FALSE(messages.empty());
+
+    std::string res = chat->sendMessageStream(createsession, message, [=](const std::string data, bool statu) -> void
+                                              {
+
+            if(statu)
+            {
+                INF("{}",data);
+            }
+            else
+                INF("DONE");
+            return; });
+
+    std::cout << res << std::endl;
 }
 
 int main(int argc, char *argv[])
