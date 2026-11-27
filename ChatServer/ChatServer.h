@@ -21,7 +21,7 @@ namespace ChatServer
         std::string chatgptapi;
 
         // olama
-        std::string ollamamodel;
+        std::string ollamamodelname;
         std::string ollamades;
         std::string ollamaurl;
     };
