@@ -124,26 +124,90 @@ namespace ChatServer
             return;
         }
 
-        //走到这里 说明前面参数解析和会话创建已经成功
+        // 走到这里 说明前面参数解析和会话创建已经成功
         Json::Value data;
-        data["session_id"]=sessionid;
-        data["model"]=model;
+        data["session_id"] = sessionid;
+        data["model"] = model;
 
         Json::Value res;
-        res["success"]=true;
-        res["message"]="回话创建成功";
-        res["data"]=data;
-        response.status=200;
+        res["success"] = true;
+        res["message"] = "会话创建成功";
+        res["data"] = data;
+        response.status = 200;
 
-        response.set_content("会话创建成功","application/json");
+        // 序列化
+        Json::StreamWriterBuilder write;
+        std::string responsestr = Json::writeString(write, res);
+
+        response.set_content(responsestr, "application/json");
     }
     // 处理获取会话列表请求
     void ChatServer::handleGetSessionListsRequest(const httplib::Request &request, httplib::Response &response)
     {
+        std::vector<std::string> sessions = _chat_sdk->getSessionLists();
+        Json::Value resarr(Json::arrayValue);
+        if (!sessions.empty())
+        {
+            for (const auto session : sessions)
+            {
+                auto sessionid = _chat_sdk->getSession(session);
+
+                // 构建响应
+                Json::Value resp;
+                resp["id"] = sessionid->_sessionid;
+                resp["model"] = sessionid->_modelname;
+                resp["create_at"] = static_cast<int64_t>(sessionid->_createdAt);
+                resp["update_at"] = static_cast<int64_t>(sessionid->_updatedAt);
+                resp["mes_count"] = sessionid->_messages.size();
+
+                if (!sessionid->_messages.empty())
+                {
+                    resp["first_mess"] = sessionid->_messages.front()._content;
+                }
+
+                resarr.append(resp);
+            }
+        }
+        // 构建响应
+
+        Json::Value res;
+        res["success"] = true;
+        res["message"] = "获取会话列表请求处理成功";
+        res["data"] = resarr;
+        response.status = 200;
+
+        // 序列化
+        Json::StreamWriterBuilder write;
+        std::string responsestr = Json::writeString(write, res);
+
+        response.set_content(responsestr, "application/json");
     }
     // 处理获取模型列表请求
     void ChatServer::handleGetModelListsRequest(const httplib::Request &request, httplib::Response &response)
     {
+        std::vector<Model_Info> models=_chat_sdk->getAvailableModels();
+
+        Json::Value modelarr(Json::arrayValue);
+        for(const auto model:models)
+        {
+            Json::Value modelinf;
+            modelinf["model"]=model._model_name;
+            modelinf["des"]=model._modeldescrib;
+
+            modelarr.append(modelinf);
+        }
+
+        //构建响应
+        Json::Value res;
+        res["success"] = true;
+        res["message"] = "获取模型列表请求处理成功";
+        res["data"] = modelarr;
+        response.status = 200;
+
+        //序列化
+        Json::StreamWriterBuilder write;
+        std::string responstr=Json::writeString(write,res);
+        response.set_content(responstr, "application/json");
     }
     // 处理删除会话请求
     void ChatServer::handleDeleteSessionRequest(const httplib::Request &request, httplib::Response &response)
